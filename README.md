@@ -1,6 +1,47 @@
 # Transcribe
 
-Audio and video transcription with speaker identification — available as a **CLI tool**, **web app**, and **cross-platform desktop app**.
+![Transcribe logo](frontend/public/logo.svg)
+
+Audio and video transcription with speaker identification. Available as a **CLI tool**, **web app**, and **cross-platform desktop app**.
+
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="images/Screenshot_20260423_164130.png" alt="Landing page with provider cards and file dropzone" />
+      <p><strong>Landing page.</strong> A clean hero, provider cards, and the file dropzone.</p>
+    </td>
+    <td width="50%">
+      <img src="images/Screenshot_20260423_165159.png" alt="Upload state while a media file is being sent to the backend" />
+      <p><strong>Upload state.</strong> The app shows the current file while the request is in flight.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="images/Screenshot_20260423_170729.png" alt="Processing state with live transcription progress" />
+      <p><strong>Processing state.</strong> Live backend progress messages stream in while transcription runs.</p>
+    </td>
+    <td width="50%">
+      <img src="images/Screenshot_20260423_173118.png" alt="Finished transcript rendered in Markdown" />
+      <p><strong>Transcript output.</strong> The completed Markdown transcript with speakers and timestamps.</p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <img src="images/Screenshot_20260423_174632.png" alt="Electron desktop app version of Transcribe" />
+      <p><strong>Desktop app.</strong> The packaged Electron experience with the same interface and icon set.</p>
+    </td>
+  </tr>
+</table>
+
+## At A Glance
+
+- **Four transcription backends** for different budgets, privacy needs, and quality targets
+- **Speaker diarization** for AssemblyAI and Deepgram, with name detection in AssemblyAI
+- **Universal media handling** through ffmpeg normalization to 16 kHz mono WAV
+- **Web, CLI, and Electron** distribution paths from the same codebase
+- **Markdown-first output** designed for easy sharing and reuse
 
 ---
 
@@ -9,24 +50,12 @@ Audio and video transcription with speaker identification — available as a **C
 | Provider | Tier | Price | Speaker ID | Languages |
 |---|---|---|---|---|
 | [AssemblyAI](https://assemblyai.com) | Freemium | $0.17 / hr · **$50 free credits** | ✅ With names | 99+ |
-| [Deepgram Nova-3](https://deepgram.com) | Freemium | $0.26 / hr · **12 000 min / yr free** | ✅ Labels | 40+ |
-| [OpenAI Whisper](https://platform.openai.com) | Paid | $0.18 – $0.36 / hr | ✗ | 99+ |
+| [Deepgram Nova-3](https://deepgram.com) | Freemium | $0.0043 / min · **12 000 min / yr free** | ✅ Labels | 40+ |
+| [OpenAI Whisper](https://platform.openai.com) | Paid | $0.003 – $0.006 / min | ✗ | 99+ |
 | Whisper (local) | **Free** | Free forever | ✗ | 99+ |
 
 > **No upfront payment required** for AssemblyAI, Deepgram, or the local Whisper option.
 > OpenAI requires a funded account but has no minimum spend.
-
----
-
-## Features
-
-- **Four transcription backends** — pick the right trade-off between cost, accuracy, and privacy
-- **Speaker diarization** — AssemblyAI and Deepgram identify multiple speakers; AssemblyAI also detects speaker names from conversation context
-- **Universal format pipeline** — any audio or video file is normalised to 16 kHz mono WAV before upload via ffmpeg
-- **Real-time progress** — Server-Sent Events stream log lines to the UI as they happen
-- **Markdown output** — timestamped `[HH:MM:SS] Speaker: text` format
-- **Three usage modes** — CLI, web browser, and Electron desktop app
-- **122 automated tests** — pytest suite covers all providers and edge cases
 
 ---
 
@@ -51,6 +80,15 @@ make dev-web      # Next.js frontend on :3000
 # 4-B. Run as desktop app
 make dev          # Electron — starts both servers and opens the window
 ```
+
+## Deployment
+
+The production desktop installer ships the packaged Next.js server and uses a bundled Python
+virtualenv when one is available at build time. For the best results, run `make install` before
+packaging so the Electron build can include `.venv`.
+
+For web deployment, set `NEXT_PUBLIC_SITE_URL` to your production domain before building so the
+canonical URLs, Open Graph metadata, and sitemap resolve correctly.
 
 ---
 
@@ -90,8 +128,6 @@ cd electron && npm install
 ```
 
 Or all at once with `make install`.
-
----
 
 ## Configuration
 
@@ -169,7 +205,7 @@ make dev-api   # terminal 1
 make dev-web   # terminal 2
 ```
 
-Open `http://localhost:3000`, choose a provider, drag-and-drop your file.
+Open `http://localhost:3000`, choose a provider, and drop your file.
 
 ### Desktop app (Electron)
 
@@ -178,8 +214,6 @@ make dev
 ```
 
 Starts both servers and opens the Electron window automatically.
-
----
 
 ## Output format
 
@@ -195,8 +229,6 @@ Starts both servers and opens the Electron window automatically.
 - AssemblyAI detects real speaker names from conversation context
 - Falls back to `Speaker 1`, `Speaker 2`, … when names cannot be detected
 - Providers without diarization output all speech under `Speaker 1`
-
----
 
 ## Architecture
 
@@ -216,7 +248,9 @@ transcribe/
 │   └── jobs.py                  # Thread-safe in-memory job store
 │
 ├── frontend/                    # Next.js 16 + Tailwind CSS
-│   ├── public/logo.svg          # Shared logo / browser icon asset
+│   ├── public/app-icon.svg      # Shared logo / browser icon asset
+│   ├── public/app-icon.png      # Electron app/window icon asset
+│   ├── public/logo.svg          # Logo asset used in the page
 │   └── app/components/
 │       ├── TranscribeApp.tsx    # Root — state machine, provider cards
 │       ├── DropZone.tsx         # Drag-and-drop file picker
@@ -257,7 +291,7 @@ Next.js rewrite proxy  →  FastAPI :8000
 
 ---
 
-## API reference
+## API Reference
 
 ### API list
 
@@ -289,7 +323,7 @@ Next.js rewrite proxy  →  FastAPI :8000
 
 ---
 
-## Building for distribution
+## Building for Distribution
 
 ```bash
 # Build Next.js production bundle
@@ -312,7 +346,7 @@ npm run dist:linux  # Linux  → dist/*.AppImage
 
 ---
 
-## Supported formats
+## Supported Formats
 
 | Category | Formats |
 |----------|---------|
@@ -323,7 +357,7 @@ Any format supported by ffmpeg works.
 
 ---
 
-## Provider limits
+## Provider Limits
 
 | Provider | Max size | Max duration | Notes |
 |---|---|---|---|

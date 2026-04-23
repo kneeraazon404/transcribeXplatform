@@ -1,0 +1,50 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Transcribe app icon</title>
+  <desc id="desc">A compact transcription icon with microphone, waveform, text lines, and speaker elements.</desc>
+  <defs>
+    <linearGradient id="bg" x1="56" y1="48" x2="456" y2="464" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f172a" />
+      <stop offset="0.5" stop-color="#1e1b4b" />
+      <stop offset="1" stop-color="#0f766e" />
+    </linearGradient>
+    <linearGradient id="accent" x1="104" y1="120" x2="408" y2="392" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22d3ee" />
+      <stop offset="0.5" stop-color="#818cf8" />
+      <stop offset="1" stop-color="#f97316" />
+    </linearGradient>
+    <linearGradient id="wave" x1="128" y1="210" x2="384" y2="282" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f8fafc" />
+      <stop offset="0.5" stop-color="#67e8f9" />
+      <stop offset="1" stop-color="#c4b5fd" />
+    </linearGradient>
+    <filter id="shadow" x="40" y="40" width="432" height="432" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#020617" flood-opacity="0.34" />
+    </filter>
+  </defs>
+
+  <rect x="48" y="48" width="416" height="416" rx="112" fill="url(#bg)" />
+  <circle cx="374" cy="126" r="92" fill="#22d3ee" fill-opacity="0.14" />
+  <circle cx="130" cy="346" r="88" fill="#a855f7" fill-opacity="0.1" />
+
+  <g filter="url(#shadow)">
+    <rect x="98" y="98" width="316" height="316" rx="84" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.18)" stroke-width="2" />
+
+    <rect x="140" y="146" width="70" height="120" rx="28" fill="rgba(15,23,42,0.48)" stroke="rgba(255,255,255,0.18)" />
+    <rect x="164" y="162" width="22" height="54" rx="11" fill="#e2e8f0" />
+    <rect x="154" y="220" width="42" height="10" rx="5" fill="#e2e8f0" />
+    <path d="M175 230v22" stroke="#e2e8f0" stroke-width="5" stroke-linecap="round" />
+    <path d="M196 176c10 7 10 25 0 32" stroke="#67e8f9" stroke-width="5" stroke-linecap="round" />
+    <path d="M206 168c15 10 15 35 0 45" stroke="#22d3ee" stroke-width="5" stroke-linecap="round" />
+
+    <path d="M246 206c14-18 28-18 42 0s28 18 42 0 28-18 42 0 28 18 42 0" stroke="url(#wave)" stroke-width="14" stroke-linecap="round" />
+
+    <rect x="244" y="262" width="170" height="22" rx="11" fill="rgba(248,250,252,0.88)" />
+    <rect x="244" y="296" width="204" height="22" rx="11" fill="rgba(248,250,252,0.6)" />
+    <rect x="244" y="330" width="138" height="22" rx="11" fill="rgba(248,250,252,0.42)" />
+
+    <rect x="356" y="148" width="74" height="54" rx="16" fill="rgba(15,23,42,0.44)" stroke="rgba(255,255,255,0.2)" />
+    <path d="M430 165l26-13v40l-26-13" fill="rgba(148,163,184,0.45)" stroke="rgba(248,250,252,0.68)" stroke-width="2" stroke-linejoin="round" />
+
+    <rect x="254" y="390" width="202" height="6" rx="3" fill="url(#accent)" opacity="0.9" />
+  </g>
+</svg>

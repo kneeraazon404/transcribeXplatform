@@ -151,7 +151,7 @@ async function createWindow() {
     minHeight: 560,
     titleBarStyle: process.platform === "darwin" ? "hiddenInset" : "default",
     backgroundColor: "#0a0a0a",
-    icon: path.join(RESOURCES, "frontend", "public", "logo.png"),
+    icon: path.join(RESOURCES, "frontend", "public", "app-icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,

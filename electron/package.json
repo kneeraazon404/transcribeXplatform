@@ -18,7 +18,7 @@
   "build": {
     "appId": "com.kneeraazon.transcribe",
     "productName": "Transcribe",
-    "icon": "../frontend/public/logo.png",
+    "icon": "../frontend/public/app-icon.png",
     "directories": {
       "output": "dist"
     },
@@ -79,7 +79,7 @@
       ]
     },
     "linux": {
-      "icon": "../frontend/public/logo.png",
+      "icon": "../frontend/public/app-icon.png",
       "target": [
         {
           "target": "AppImage",

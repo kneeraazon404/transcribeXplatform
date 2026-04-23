@@ -297,11 +297,11 @@ export default function TranscribeApp() {
       <main className="flex-1 flex flex-col items-center px-6 py-12 gap-10 max-w-7xl mx-auto w-full">
         {appState === "idle" && (
           <>
-            <div className="w-full max-w-2xl mx-auto text-center sm:text-left">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-balance mb-3">
+            <div className="w-full text-center sm:text-left md:w-full">
+              <h1 className="w-full text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-balance mb-3">
                 Audio & Video Transcription
               </h1>
-              <p className="text-sm sm:text-base lg:text-lg leading-relaxed text-neutral-300 text-balance max-w-xl mx-auto sm:mx-0">
+              <p className="w-full text-sm sm:text-base lg:text-lg leading-relaxed text-neutral-300 text-balance mx-auto sm:mx-0">
                 Choose a provider, drop your file, get a speaker-labelled
                 Markdown transcript.
               </p>
