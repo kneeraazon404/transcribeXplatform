@@ -1,9 +1,9 @@
 """Tests for transcribe_openai.py — OpenAI Whisper API backend."""
+
 import builtins
-import pytest
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import pytest
 from transcribe_openai import (
     OpenAIKeyMissingError,
     OpenAINotInstalledError,
@@ -11,12 +11,11 @@ from transcribe_openai import (
     _ensure_openai,
     transcribe_with_openai,
 )
-from format_md import SpeakerTurn
-
 
 # ---------------------------------------------------------------------------
 # _ensure_openai
 # ---------------------------------------------------------------------------
+
 
 class TestEnsureOpenAI:
     def test_raises_when_not_installed(self):
@@ -28,7 +27,7 @@ class TestEnsureOpenAI:
             return real_import(name, *args, **kwargs)
 
         with patch("builtins.__import__", side_effect=mock_import):
-            with pytest.raises(OpenAINotInstalledError, match="pip install openai"):
+            with pytest.raises(OpenAINotInstalledError, match="uv pip install"):
                 _ensure_openai()
 
     def test_passes_when_installed(self):
@@ -40,6 +39,7 @@ class TestEnsureOpenAI:
 # ---------------------------------------------------------------------------
 # _ensure_api_key
 # ---------------------------------------------------------------------------
+
 
 class TestEnsureApiKey:
     def test_raises_when_missing(self, monkeypatch):
@@ -55,6 +55,7 @@ class TestEnsureApiKey:
 # ---------------------------------------------------------------------------
 # transcribe_with_openai
 # ---------------------------------------------------------------------------
+
 
 def _make_segment(start, end, text):
     seg = MagicMock()

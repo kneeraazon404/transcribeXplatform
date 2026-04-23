@@ -28,7 +28,7 @@ def _ensure_openai() -> None:
         import openai  # noqa: F401
     except ImportError:
         raise OpenAINotInstalledError(
-            "openai package not installed. Run: pip install openai"
+            "openai package not installed. Run: uv pip install --python .venv/bin/python openai"
         )
 
 
@@ -141,9 +141,7 @@ def transcribe_openai_pipeline(
     try:
         media_info = probe_media(input_path)
     except Exception as e:
-        raise ValueError(
-            f"Invalid audio/video file: {input_path.name}\n{e}"
-        )
+        raise ValueError(f"Invalid audio/video file: {input_path.name}\n{e}")
 
     if not media_info.has_audio:
         non_media = {".md", ".txt", ".json", ".pdf", ".doc", ".docx", ".html"}

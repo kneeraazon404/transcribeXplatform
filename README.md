@@ -74,13 +74,14 @@ winget install FFmpeg
 ### Python dependencies
 
 ```bash
-pip install -r requirements.txt
+uv venv
+uv pip install --python .venv/bin/python -r requirements.txt
 ```
 
 The local Whisper backend also requires:
 
 ```bash
-pip install faster-whisper
+uv pip install --python .venv/bin/python faster-whisper
 ```
 
 ### Frontend & Electron
@@ -303,7 +304,7 @@ npm run dist:win    # Windows → dist/*.exe
 npm run dist:linux  # Linux  → dist/*.AppImage
 ```
 
-> **Note:** Electron distributables require Python 3.8+ and the pip dependencies
+> **Note:** Electron distributables require Python 3.8+ and the uv-installed Python dependencies
 > to be installed on the target machine. Bundling a full Python runtime
 > (e.g. via PyInstaller) would make the app truly self-contained.
 

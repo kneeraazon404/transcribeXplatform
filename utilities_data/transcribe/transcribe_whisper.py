@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
 from typing import Optional
 
@@ -19,7 +19,7 @@ def _ensure_faster_whisper() -> None:
         import faster_whisper  # noqa: F401
     except ImportError:
         raise WhisperNotInstalledError(
-            "faster-whisper not installed. Run: pip install faster-whisper"
+            "faster-whisper not installed. Run: uv pip install --python .venv/bin/python faster-whisper"
         )
 
 
@@ -65,7 +65,9 @@ def transcribe_with_whisper(
         vad_filter=True,
     )
 
-    print(f"Detected language: {info.language} (confidence: {info.language_probability:.1%})")
+    print(
+        f"Detected language: {info.language} (confidence: {info.language_probability:.1%})"
+    )
 
     turns = []
     for segment in segments:
@@ -124,7 +126,15 @@ def transcribe_whisper_pipeline(
         )
 
     if not media_info.has_audio:
-        non_media_extensions = {".md", ".txt", ".json", ".pdf", ".doc", ".docx", ".html"}
+        non_media_extensions = {
+            ".md",
+            ".txt",
+            ".json",
+            ".pdf",
+            ".doc",
+            ".docx",
+            ".html",
+        }
         if input_path.suffix.lower() in non_media_extensions:
             raise ValueError(
                 f"Invalid file type: {input_path.name}\n"
