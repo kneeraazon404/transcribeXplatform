@@ -1,7 +1,5 @@
 # Transcribe
 
-![Transcribe logo](frontend/public/logo.svg)
-
 Audio and video transcription with speaker identification — available as a **CLI tool**, **web app**, and **cross-platform desktop app**.
 
 ---
