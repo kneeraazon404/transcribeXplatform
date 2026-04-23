@@ -1,4 +1,23 @@
-.DS_STORE
+.DS_Store
 .env
+.env.*
+
+# Python
 __pycache__/
+.pytest_cache/
+.venv/
+*.pyc
+*.pyo
+
+# Node / Next.js / Electron
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+electron/node_modules/
+electron/dist/
+dist/
+
+# App / OS noise
 data/
+*.log

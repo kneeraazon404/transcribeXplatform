@@ -306,6 +306,9 @@ npm run dist:linux  # Linux  → dist/*.AppImage
 > Python virtualenv when one is available at build time. For the most portable installer, run
 > `make install` before packaging so the Electron build can include `.venv`. ffmpeg is still
 > required on the target machine.
+>
+> For deployed web builds, set `NEXT_PUBLIC_SITE_URL` so canonical URLs, Open Graph, and sitemap
+> metadata resolve to your production domain instead of localhost.
 
 ---
 

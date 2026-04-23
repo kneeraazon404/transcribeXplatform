@@ -166,19 +166,24 @@ export default function TranscribeApp() {
   const esRef = useRef<EventSource | null>(null);
 
   const provider = PROVIDERS.find((p) => p.key === selectedBackend)!;
+  const apiBaseUrl =
+    process.env.NODE_ENV === "production" ? "" : "http://localhost:8000";
+  const apiUrl = useCallback(
+    (path: string) => `${apiBaseUrl}${path}`,
+    [apiBaseUrl],
+  );
+  const handleSelectBackend = useCallback((key: BackendKey) => {
+    setSelectedBackend(key);
+    setModel(PROVIDERS.find((p) => p.key === key)?.defaultModel ?? "");
+  }, []);
 
   // Fetch backend availability on mount
   useEffect(() => {
-    fetch("/api/health")
+    fetch(apiUrl("/api/health"))
       .then((r) => r.json())
       .then((d) => setHealth(d.backends))
       .catch(() => {});
-  }, []);
-
-  // Reset model when backend changes
-  useEffect(() => {
-    setModel(provider.defaultModel);
-  }, [selectedBackend, provider.defaultModel]);
+  }, [apiUrl]);
 
   const reset = useCallback(() => {
     esRef.current?.close();
@@ -207,7 +212,7 @@ export default function TranscribeApp() {
 
       let jobId: string;
       try {
-        const res = await fetch("/api/transcribe", {
+        const res = await fetch(apiUrl("/api/transcribe"), {
           method: "POST",
           body: fd,
         });
@@ -224,7 +229,7 @@ export default function TranscribeApp() {
 
       setAppState("processing");
 
-      const es = new EventSource(`/api/jobs/${jobId}/events`);
+      const es = new EventSource(apiUrl(`/api/jobs/${jobId}/events`));
       esRef.current = es;
 
       es.onmessage = (evt) => {
@@ -235,7 +240,7 @@ export default function TranscribeApp() {
           es.close();
           esRef.current = null;
           if (payload.status === "completed") {
-            fetch(`/api/jobs/${jobId}/transcript`)
+            fetch(apiUrl(`/api/jobs/${jobId}/transcript`))
               .then((r) => r.json())
               .then((d) => {
                 setTranscript(d.transcript);
@@ -259,13 +264,13 @@ export default function TranscribeApp() {
         setAppState("error");
       };
     },
-    [selectedBackend, model, language, title, provider.defaultModel],
+    [apiUrl, selectedBackend, model, language, title, provider.defaultModel],
   );
 
   return (
     <div className="min-h-screen bg-grid text-neutral-100 flex flex-col">
       {/* Header */}
-      <header className="border-b border-neutral-800/80 bg-neutral-950/85 backdrop-blur sticky top-0 z-10">
+      <header className="border-b border-neutral-700/80 bg-neutral-950/92 backdrop-blur sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-5 flex items-center gap-4">
           <div className="shrink-0 rounded-2xl border border-white/15 bg-linear-to-br from-cyan-500/12 via-indigo-500/10 to-orange-500/12 p-1.5 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_12px_30px_rgba(2,6,23,0.35)]">
             <LogoMark className="h-10 w-30 sm:h-11 sm:w-33" />
@@ -274,14 +279,14 @@ export default function TranscribeApp() {
             <span className="block font-semibold text-lg sm:text-xl tracking-tight">
               Transcribe
             </span>
-            <span className="block text-xs sm:text-sm text-neutral-500">
+            <span className="block text-xs sm:text-sm text-neutral-400">
               Audio & video to text
             </span>
           </div>
           {appState !== "idle" && (
             <button
               onClick={reset}
-              className="ml-auto text-sm text-neutral-400 hover:text-white transition-colors"
+              className="ml-auto rounded-md px-2 py-1 text-sm text-neutral-300 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950"
             >
               ← New file
             </button>
@@ -296,7 +301,7 @@ export default function TranscribeApp() {
               <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-balance mb-3">
                 Audio & Video Transcription
               </h1>
-              <p className="text-sm sm:text-base lg:text-lg leading-relaxed text-neutral-400 text-balance max-w-xl mx-auto sm:mx-0">
+              <p className="text-sm sm:text-base lg:text-lg leading-relaxed text-neutral-300 text-balance max-w-xl mx-auto sm:mx-0">
                 Choose a provider, drop your file, get a speaker-labelled
                 Markdown transcript.
               </p>
@@ -307,19 +312,19 @@ export default function TranscribeApp() {
               providers={PROVIDERS}
               selected={selectedBackend}
               health={health}
-              onSelect={setSelectedBackend}
+              onSelect={handleSelectBackend}
             />
 
             {/* Model selector (only for providers that have it) */}
             {provider.models.length > 0 && (
               <div className="w-full flex flex-col gap-2">
-                <label className="text-sm font-medium text-neutral-400 uppercase tracking-wide">
+                <label className="text-sm font-medium text-neutral-300 uppercase tracking-wide">
                   {provider.name} model
                 </label>
                 <select
                   value={model || provider.defaultModel}
                   onChange={(e) => setModel(e.target.value)}
-                  className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-3 text-base focus:outline-none focus:border-violet-500"
+                  className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-3 text-base text-neutral-100 focus:outline-none focus:border-cyan-400 focus-visible:ring-2 focus-visible:ring-cyan-400/40"
                 >
                   {provider.models.map((m) => (
                     <option key={m.value} value={m.value}>
@@ -333,7 +338,7 @@ export default function TranscribeApp() {
             {/* Optional fields */}
             <div className="w-full grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-neutral-400 uppercase tracking-wide">
+                <label className="text-sm font-medium text-neutral-300 uppercase tracking-wide">
                   Language
                 </label>
                 <input
@@ -341,11 +346,11 @@ export default function TranscribeApp() {
                   placeholder="Auto-detect (e.g. en, es, fr)"
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-3 text-base focus:outline-none focus:border-violet-500 placeholder-neutral-600"
+                  className="bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-3 text-base text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:border-cyan-400 focus-visible:ring-2 focus-visible:ring-cyan-400/40"
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-neutral-400 uppercase tracking-wide">
+                <label className="text-sm font-medium text-neutral-300 uppercase tracking-wide">
                   Title
                 </label>
                 <input
@@ -353,7 +358,7 @@ export default function TranscribeApp() {
                   placeholder="Transcript title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-3 text-base focus:outline-none focus:border-violet-500 placeholder-neutral-600"
+                  className="bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-3 text-base text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:border-cyan-400 focus-visible:ring-2 focus-visible:ring-cyan-400/40"
                 />
               </div>
             </div>
@@ -363,9 +368,13 @@ export default function TranscribeApp() {
         )}
 
         {appState === "uploading" && (
-          <div className="w-full flex flex-col items-center gap-4 py-20">
+          <div
+            className="w-full flex flex-col items-center gap-4 py-20"
+            aria-live="polite"
+            aria-busy="true"
+          >
             <Spinner />
-            <p className="text-neutral-400">Uploading {filename}…</p>
+            <p className="text-neutral-300">Uploading {filename}…</p>
           </div>
         )}
 
@@ -386,14 +395,17 @@ export default function TranscribeApp() {
         )}
 
         {appState === "error" && (
-          <div className="w-full bg-red-950/60 border border-red-800 rounded-xl p-6 space-y-3">
+          <div
+            className="w-full bg-red-950/60 border border-red-700 rounded-xl p-6 space-y-3"
+            role="alert"
+          >
             <h2 className="font-semibold text-red-300">Transcription failed</h2>
-            <pre className="text-sm text-red-400 font-mono whitespace-pre-wrap">
+            <pre className="text-sm text-red-200 font-mono whitespace-pre-wrap">
               {errorMsg}
             </pre>
             <button
               onClick={reset}
-              className="mt-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 rounded-lg text-sm transition-colors"
+              className="mt-2 rounded-lg bg-neutral-800 px-4 py-2 text-sm transition-colors hover:bg-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2 focus-visible:ring-offset-red-950"
             >
               Try again
             </button>
@@ -423,7 +435,7 @@ function ProviderSelector({
 }: ProviderSelectorProps) {
   return (
     <div className="w-full space-y-3">
-      <h2 className="text-sm font-semibold text-neutral-400 uppercase tracking-wide">
+      <h2 className="text-sm font-semibold text-neutral-300 uppercase tracking-wide">
         Provider
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -435,7 +447,7 @@ function ProviderSelector({
               key={p.key}
               onClick={() => onSelect(p.key)}
               className={[
-                "relative overflow-hidden text-left rounded-xl border p-6 transition-all focus:outline-none",
+                "relative overflow-hidden text-left rounded-xl border p-6 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950",
                 active
                   ? CARD_STYLES[p.key].active
                   : CARD_STYLES[p.key].inactive,
@@ -459,7 +471,7 @@ function ProviderSelector({
               />
               {/* Header row */}
               <div className="flex items-start justify-between gap-2 mb-3">
-                <span className="font-semibold text-base leading-tight">
+                <span className="font-semibold text-base leading-tight text-neutral-100">
                   {p.name}
                 </span>
                 <span
@@ -470,21 +482,21 @@ function ProviderSelector({
               </div>
 
               {/* Tagline */}
-              <p className="text-sm text-neutral-400 mb-3">{p.tagline}</p>
+              <p className="text-sm text-neutral-300 mb-3">{p.tagline}</p>
 
               {/* Features */}
               <ul className="space-y-1 mb-4">
                 {p.features.map((f) => (
                   <li
                     key={f}
-                    className="flex items-center gap-2 text-sm text-neutral-300"
+                    className="flex items-center gap-2 text-sm text-neutral-200"
                   >
                     <CheckSmallIcon className="w-4 h-4 text-emerald-500 shrink-0" />
                     {f}
                   </li>
                 ))}
                 {!p.diarization && (
-                  <li className="flex items-center gap-2 text-sm text-neutral-500">
+                  <li className="flex items-center gap-2 text-sm text-neutral-400">
                     <XSmallIcon className="w-4 h-4 shrink-0" />
                     No speaker diarization
                   </li>
@@ -492,12 +504,12 @@ function ProviderSelector({
               </ul>
 
               {/* Pricing */}
-              <p className="text-sm text-neutral-500 font-mono">{p.pricing}</p>
+              <p className="text-sm text-neutral-300 font-mono">{p.pricing}</p>
 
               {/* Unavailable badge */}
               {health && !available && (
                 <div className="absolute top-3 right-3">
-                  <span className="text-xs text-amber-400 bg-amber-950/60 border border-amber-700 rounded px-2 py-0.5">
+                  <span className="text-xs text-amber-200 bg-amber-950/70 border border-amber-600 rounded px-2 py-0.5">
                     {p.key === "whisper" ? "Not installed" : "No API key"}
                   </span>
                 </div>

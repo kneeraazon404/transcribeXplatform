@@ -8,7 +8,11 @@ interface Props {
   onReset: () => void;
 }
 
-export default function TranscriptView({ transcript, filename, onReset }: Props) {
+export default function TranscriptView({
+  transcript,
+  filename,
+  onReset,
+}: Props) {
   const [copied, setCopied] = useState(false);
 
   const downloadMd = useCallback(() => {
@@ -52,7 +56,7 @@ export default function TranscriptView({ transcript, filename, onReset }: Props)
         </div>
         <button
           onClick={copy}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-neutral-800 px-3 py-1.5 text-sm transition-colors hover:bg-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40"
         >
           {copied ? (
             <>
@@ -68,28 +72,28 @@ export default function TranscriptView({ transcript, filename, onReset }: Props)
         </button>
         <button
           onClick={downloadMd}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-neutral-800 px-3 py-1.5 text-sm transition-colors hover:bg-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40"
         >
           <DownloadIcon className="w-4 h-4" />
           .md
         </button>
         <button
           onClick={downloadTxt}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-neutral-800 px-3 py-1.5 text-sm transition-colors hover:bg-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40"
         >
           <DownloadIcon className="w-4 h-4" />
           .txt
         </button>
         <button
           onClick={onReset}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-700 hover:bg-violet-600 text-sm transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-cyan-700 px-3 py-1.5 text-sm transition-colors hover:bg-cyan-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40"
         >
           New file
         </button>
       </div>
 
       {/* Transcript content */}
-      <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 font-mono text-sm leading-relaxed max-h-[60vh] overflow-y-auto whitespace-pre-wrap text-neutral-200">
+      <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 font-mono text-sm leading-relaxed max-h-[60vh] overflow-y-auto whitespace-pre-wrap text-neutral-100">
         {transcript}
       </div>
     </div>
@@ -98,7 +102,13 @@ export default function TranscriptView({ transcript, filename, onReset }: Props)
 
 function CopyIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.5} className={className}>
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      className={className}
+    >
       <rect x="7" y="7" width="9" height="11" rx="1.5" />
       <path d="M13 7V5.5A1.5 1.5 0 0011.5 4h-7A1.5 1.5 0 003 5.5v9A1.5 1.5 0 004.5 16H7" />
     </svg>
@@ -107,16 +117,36 @@ function CopyIcon({ className }: { className?: string }) {
 
 function CheckIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2} className={className}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5l4 4 7-7" />
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      className={className}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4.5 10.5l4 4 7-7"
+      />
     </svg>
   );
 }
 
 function DownloadIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.5} className={className}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M10 3v10m0 0l-3.5-3.5M10 13l3.5-3.5M3 17h14" />
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      className={className}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M10 3v10m0 0l-3.5-3.5M10 13l3.5-3.5M3 17h14"
+      />
     </svg>
   );
 }
