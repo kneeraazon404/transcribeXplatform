@@ -1,5 +1,6 @@
 const { app, BrowserWindow, shell } = require("electron");
 const { spawn } = require("child_process");
+const fs = require("fs");
 const path = require("path");
 const http = require("http");
 
@@ -22,7 +23,15 @@ let apiProcess = null;
 
 function startApiServer() {
   const backendDir = path.join(RESOURCES, "backend");
-  const pythonCmd = process.platform === "win32" ? "python" : "python3";
+  const packagedPython =
+    process.platform === "win32"
+      ? path.join(RESOURCES, "venv", "Scripts", "python.exe")
+      : path.join(RESOURCES, "venv", "bin", "python");
+  const pythonCmd = fs.existsSync(packagedPython)
+    ? packagedPython
+    : process.platform === "win32"
+      ? "python"
+      : "python3";
 
   apiProcess = spawn(
     pythonCmd,
@@ -103,11 +112,16 @@ function startNextServer() {
   if (IS_DEV) return Promise.resolve(); // started externally by concurrently
 
   const frontendDir = path.join(RESOURCES, "frontend");
-  const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
+  const serverEntry = path.join(frontendDir, "server.js");
 
-  nextProcess = spawn(npmCmd, ["start", "--", "--port", String(NEXT_PORT)], {
+  nextProcess = spawn(process.execPath, [serverEntry], {
     cwd: frontendDir,
-    env: { ...process.env, PORT: String(NEXT_PORT), HOSTNAME: "127.0.0.1" },
+    env: {
+      ...process.env,
+      ELECTRON_RUN_AS_NODE: "1",
+      PORT: String(NEXT_PORT),
+      HOSTNAME: "127.0.0.1",
+    },
     stdio: ["ignore", "pipe", "pipe"],
   });
 

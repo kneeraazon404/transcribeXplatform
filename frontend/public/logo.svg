@@ -1,28 +1,46 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Transcribe logo</title>
-  <desc id="desc">A rounded square speech bubble with an audio waveform and transcript lines.</desc>
+  <desc id="desc">A vibrant speech bubble with audio waveforms and a transcription note icon.</desc>
   <defs>
-    <linearGradient id="logo-bg" x1="72" y1="72" x2="440" y2="440" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#0f172a"/>
-      <stop offset="0.55" stop-color="#1e1b4b"/>
-      <stop offset="1" stop-color="#0f766e"/>
+    <linearGradient id="logo-bg" x1="56" y1="52" x2="454" y2="456" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0b1020" />
+      <stop offset="0.42" stop-color="#1e1b4b" />
+      <stop offset="0.74" stop-color="#0f766e" />
+      <stop offset="1" stop-color="#14b8a6" />
     </linearGradient>
-    <linearGradient id="logo-accent" x1="160" y1="196" x2="360" y2="320" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#38bdf8"/>
-      <stop offset="0.45" stop-color="#8b5cf6"/>
-      <stop offset="1" stop-color="#34d399"/>
+    <linearGradient id="logo-glow" x1="132" y1="120" x2="392" y2="388" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22d3ee" />
+      <stop offset="0.42" stop-color="#a855f7" />
+      <stop offset="1" stop-color="#f97316" />
+    </linearGradient>
+    <linearGradient id="logo-wave" x1="168" y1="206" x2="356" y2="318" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f8fafc" />
+      <stop offset="0.52" stop-color="#67e8f9" />
+      <stop offset="1" stop-color="#c084fc" />
+    </linearGradient>
+    <linearGradient id="logo-note" x1="230" y1="150" x2="320" y2="244" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fde68a" />
+      <stop offset="1" stop-color="#fb7185" />
     </linearGradient>
     <filter id="logo-shadow" x="52" y="52" width="408" height="408" filterUnits="userSpaceOnUse">
       <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#020617" flood-opacity="0.38"/>
     </filter>
   </defs>
-  <rect x="48" y="48" width="416" height="416" rx="124" fill="url(#logo-bg)"/>
-  <circle cx="374" cy="122" r="108" fill="#38bdf8" fill-opacity="0.14"/>
+  <rect x="48" y="48" width="416" height="416" rx="126" fill="url(#logo-bg)"/>
+  <circle cx="376" cy="120" r="110" fill="#22d3ee" fill-opacity="0.16"/>
+  <circle cx="132" cy="134" r="64" fill="#f97316" fill-opacity="0.12"/>
+  <circle cx="142" cy="350" r="92" fill="#8b5cf6" fill-opacity="0.1"/>
   <g filter="url(#logo-shadow)">
-    <path d="M160 146h192c31.5 0 57 25.5 57 57v66c0 31.5-25.5 57-57 57h-71l-56 54v-54h-65c-31.5 0-57-25.5-57-57v-66c0-31.5 25.5-57 57-57Z" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.16)" stroke-width="2"/>
-    <path d="M188 220c14-18 29-18 43 0s29 18 43 0 29-18 43 0 29 18 43 0 29-18 43 0" stroke="url(#logo-accent)" stroke-width="18" stroke-linecap="round"/>
-    <rect x="188" y="260" width="138" height="12" rx="6" fill="#f8fafc" fill-opacity="0.94"/>
-    <rect x="188" y="286" width="172" height="12" rx="6" fill="#f8fafc" fill-opacity="0.64"/>
-    <rect x="188" y="312" width="118" height="12" rx="6" fill="#f8fafc" fill-opacity="0.44"/>
+    <path d="M150 144h212c30.4 0 55 24.6 55 55v74c0 30.4-24.6 55-55 55h-66l-44 44v-44h-102c-30.4 0-55-24.6-55-55v-74c0-30.4 24.6-55 55-55Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.18)" stroke-width="2"/>
+    <path d="M178 228c16-22 32-22 48 0s32 22 48 0 32-22 48 0 32 22 48 0 32-22 48 0" stroke="url(#logo-wave)" stroke-width="18" stroke-linecap="round"/>
+    <path d="M204 186c18-24 36-24 54 0s36 24 54 0 36-24 54 0" stroke="url(#logo-glow)" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <circle cx="322" cy="170" r="22" fill="url(#logo-note)"/>
+    <path d="M321 159v24" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+    <path d="M321 159c8 0 15 4 18 10" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="297" cy="190" r="7" fill="#e2e8f0" fill-opacity="0.92"/>
+    <circle cx="342" cy="204" r="7" fill="#e2e8f0" fill-opacity="0.72"/>
+    <rect x="184" y="270" width="144" height="12" rx="6" fill="#f8fafc" fill-opacity="0.96"/>
+    <rect x="184" y="296" width="178" height="12" rx="6" fill="#f8fafc" fill-opacity="0.68"/>
+    <rect x="184" y="322" width="124" height="12" rx="6" fill="#f8fafc" fill-opacity="0.46"/>
   </g>
 </svg>

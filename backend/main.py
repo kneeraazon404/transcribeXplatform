@@ -17,12 +17,12 @@ _ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(_ROOT / "utilities_data" / "transcribe"))
 
 from dotenv import load_dotenv
+
 load_dotenv(_ROOT / ".env")
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
-
 from jobs import Job, JobStatus, create_job, get_job
 
 # ---------------------------------------------------------------------------
@@ -33,11 +33,11 @@ app = FastAPI(title="Transcribe API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",   # Next.js dev
+        "http://localhost:3000",  # Next.js dev
         "http://127.0.0.1:3000",  # Next.js dev (127.0.0.1)
         "http://localhost:3001",
         "http://127.0.0.1:3001",
-        "app://.",                 # Electron production
+        "app://.",  # Electron production
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -52,6 +52,7 @@ VALID_BACKENDS = {"assemblyai", "openai", "deepgram", "whisper"}
 # Health / capability check
 # ---------------------------------------------------------------------------
 
+
 @app.get("/api/health")
 def health():
     """Report which backends are available based on installed packages and env vars."""
@@ -62,6 +63,7 @@ def health():
     whisper_ready = False
     try:
         import faster_whisper  # noqa: F401
+
         whisper_ready = True
     except ImportError:
         pass
@@ -80,6 +82,7 @@ def health():
 # ---------------------------------------------------------------------------
 # Transcription job runner (runs in thread pool)
 # ---------------------------------------------------------------------------
+
 
 def _run_job(
     job: Job,
@@ -119,7 +122,9 @@ def _run_job(
         turns = _transcribe(job, backend, model, wav_path, language_code)
 
         speaker_count = len({t.speaker_label for t in turns})
-        job.add_message(f"Detected {speaker_count} speaker(s), {len(turns)} segment(s).")
+        job.add_message(
+            f"Detected {speaker_count} speaker(s), {len(turns)} segment(s)."
+        )
 
         # --- Save markdown ---
         md_path = save_transcript_markdown(
@@ -145,7 +150,9 @@ def _run_job(
                 pass
 
 
-def _transcribe(job: Job, backend: str, model: str, wav_path: Path, language_code: Optional[str]):
+def _transcribe(
+    job: Job, backend: str, model: str, wav_path: Path, language_code: Optional[str]
+):
     """Dispatch to the correct provider and return a list of SpeakerTurn objects."""
 
     if backend == "assemblyai":
@@ -153,17 +160,23 @@ def _transcribe(job: Job, backend: str, model: str, wav_path: Path, language_cod
         from transcribe_aai import _extract_speaker_names, transcribe_audio_file
 
         job.add_message("Uploading to AssemblyAI…")
-        transcript = transcribe_audio_file(wav_path, language_code=language_code or None)
+        transcript = transcribe_audio_file(
+            wav_path, language_code=language_code or None
+        )
         job.add_message(f"AssemblyAI complete. Words: {len(transcript.words or [])}")
         speaker_names = _extract_speaker_names(transcript)
-        return assemblyai_to_speaker_turns(transcript.utterances, speaker_names=speaker_names)
+        return assemblyai_to_speaker_turns(
+            transcript.utterances, speaker_names=speaker_names
+        )
 
     if backend == "openai":
         from transcribe_openai import transcribe_with_openai
 
         _model = model or "gpt-4o-mini-transcribe"
         job.add_message(f"Uploading to OpenAI ({_model})…")
-        turns = transcribe_with_openai(wav_path, model=_model, language_code=language_code or None)
+        turns = transcribe_with_openai(
+            wav_path, model=_model, language_code=language_code or None
+        )
         job.add_message(f"OpenAI complete. Segments: {len(turns)}")
         return turns
 
@@ -172,7 +185,9 @@ def _transcribe(job: Job, backend: str, model: str, wav_path: Path, language_cod
 
         _model = model or "nova-3"
         job.add_message(f"Uploading to Deepgram ({_model})…")
-        turns = transcribe_with_deepgram(wav_path, model=_model, language_code=language_code or None)
+        turns = transcribe_with_deepgram(
+            wav_path, model=_model, language_code=language_code or None
+        )
         job.add_message(f"Deepgram complete. Segments: {len(turns)}")
         return turns
 
@@ -181,7 +196,9 @@ def _transcribe(job: Job, backend: str, model: str, wav_path: Path, language_cod
 
         _model = model or "base"
         job.add_message(f"Transcribing locally with Whisper ({_model})…")
-        turns = transcribe_with_whisper(wav_path, model_size=_model, language_code=language_code or None)
+        turns = transcribe_with_whisper(
+            wav_path, model_size=_model, language_code=language_code or None
+        )
         job.add_message(f"Whisper complete. Segments: {len(turns)}")
         return turns
 
@@ -193,8 +210,20 @@ def _transcribe(job: Job, backend: str, model: str, wav_path: Path, language_cod
 # ---------------------------------------------------------------------------
 
 ALLOWED_EXTENSIONS = {
-    ".wav", ".mp3", ".flac", ".ogg", ".aac", ".m4a", ".wma",
-    ".mp4", ".mov", ".avi", ".mkv", ".flv", ".webm", ".wmv",
+    ".wav",
+    ".mp3",
+    ".flac",
+    ".ogg",
+    ".aac",
+    ".m4a",
+    ".wma",
+    ".mp4",
+    ".mov",
+    ".avi",
+    ".mkv",
+    ".flv",
+    ".webm",
+    ".wmv",
 }
 
 
@@ -252,6 +281,7 @@ async def start_transcription(
 # GET /api/jobs/{job_id} — poll status
 # ---------------------------------------------------------------------------
 
+
 @app.get("/api/jobs/{job_id}")
 def job_status(job_id: str):
     job = get_job(job_id)
@@ -263,6 +293,7 @@ def job_status(job_id: str):
 # ---------------------------------------------------------------------------
 # GET /api/jobs/{job_id}/events — SSE live progress stream
 # ---------------------------------------------------------------------------
+
 
 @app.get("/api/jobs/{job_id}/events")
 async def job_events(job_id: str):
@@ -296,25 +327,31 @@ async def job_events(job_id: str):
 # GET /api/jobs/{job_id}/transcript — get transcript content
 # ---------------------------------------------------------------------------
 
+
 @app.get("/api/jobs/{job_id}/transcript")
 def download_transcript(job_id: str):
     job = get_job(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
     if job.status != JobStatus.COMPLETED:
-        raise HTTPException(status_code=409, detail=f"Job is {job.status}, not completed yet")
+        raise HTTPException(
+            status_code=409, detail=f"Job is {job.status}, not completed yet"
+        )
     if not job.transcript:
         raise HTTPException(status_code=404, detail="Transcript not available")
 
-    return JSONResponse(content={
-        "transcript": job.transcript,
-        "filename": f"{Path(job.filename).stem}.md",
-    })
+    return JSONResponse(
+        content={
+            "transcript": job.transcript,
+            "filename": f"{Path(job.filename).stem}.md",
+        }
+    )
 
 
 # ---------------------------------------------------------------------------
 # DELETE /api/jobs/{job_id} — clean up temp files
 # ---------------------------------------------------------------------------
+
 
 @app.delete("/api/jobs/{job_id}", status_code=204)
 def delete_job(job_id: str):
@@ -332,4 +369,5 @@ def delete_job(job_id: str):
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

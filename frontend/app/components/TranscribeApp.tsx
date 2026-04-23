@@ -109,6 +109,33 @@ const TIER_LABELS: Record<Tier, string> = {
   paid: "Paid",
 };
 
+const CARD_STYLES: Record<BackendKey, { inactive: string; active: string }> = {
+  assemblyai: {
+    inactive:
+      "border-indigo-900/60 bg-gradient-to-br from-indigo-950/35 via-slate-950 to-cyan-950/20 hover:border-indigo-500/70",
+    active:
+      "border-indigo-400 bg-gradient-to-br from-indigo-950/70 via-indigo-950/40 to-cyan-950/30 ring-1 ring-indigo-400/30",
+  },
+  deepgram: {
+    inactive:
+      "border-cyan-900/60 bg-gradient-to-br from-cyan-950/35 via-slate-950 to-teal-950/20 hover:border-cyan-500/70",
+    active:
+      "border-cyan-400 bg-gradient-to-br from-cyan-950/70 via-cyan-950/40 to-teal-950/30 ring-1 ring-cyan-400/30",
+  },
+  openai: {
+    inactive:
+      "border-emerald-900/60 bg-gradient-to-br from-emerald-950/35 via-slate-950 to-lime-950/20 hover:border-emerald-500/70",
+    active:
+      "border-emerald-400 bg-gradient-to-br from-emerald-950/70 via-emerald-950/40 to-lime-950/30 ring-1 ring-emerald-400/30",
+  },
+  whisper: {
+    inactive:
+      "border-orange-900/60 bg-gradient-to-br from-orange-950/35 via-slate-950 to-rose-950/20 hover:border-orange-500/70",
+    active:
+      "border-orange-400 bg-gradient-to-br from-orange-950/70 via-orange-950/40 to-rose-950/30 ring-1 ring-orange-400/30",
+  },
+};
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -236,42 +263,43 @@ export default function TranscribeApp() {
   );
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col">
+    <div className="min-h-screen bg-grid text-neutral-100 flex flex-col">
       {/* Header */}
-      <header className="border-b border-neutral-800/80 bg-neutral-950/85 backdrop-blur px-6 py-4 flex items-center gap-3">
-        <LogoMark className="h-10 w-10 shrink-0" />
-        <div className="leading-tight">
-          <span className="block font-semibold text-lg tracking-tight">
-            Transcribe
-          </span>
-          <span className="block text-xs text-neutral-500">
-            Audio & video to text
-          </span>
+      <header className="border-b border-neutral-800/80 bg-neutral-950/85 backdrop-blur sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center gap-4">
+          <div className="shrink-0 rounded-2xl border border-white/15 bg-linear-to-br from-cyan-500/12 via-indigo-500/10 to-orange-500/12 p-1.5 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_12px_30px_rgba(2,6,23,0.35)]">
+            <LogoMark className="h-10 w-30 sm:h-11 sm:w-33" />
+          </div>
+          <div className="leading-tight">
+            <span className="block font-semibold text-lg sm:text-xl tracking-tight">
+              Transcribe
+            </span>
+            <span className="block text-xs sm:text-sm text-neutral-500">
+              Audio & video to text
+            </span>
+          </div>
+          {appState !== "idle" && (
+            <button
+              onClick={reset}
+              className="ml-auto text-sm text-neutral-400 hover:text-white transition-colors"
+            >
+              ← New file
+            </button>
+          )}
         </div>
-        {appState !== "idle" && (
-          <button
-            onClick={reset}
-            className="ml-auto text-sm text-neutral-400 hover:text-white transition-colors"
-          >
-            ← New file
-          </button>
-        )}
       </header>
 
-      <main className="flex-1 flex flex-col items-center px-4 py-10 gap-8 max-w-3xl mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center px-6 py-12 gap-10 max-w-7xl mx-auto w-full">
         {appState === "idle" && (
           <>
-            <div className="w-full flex items-center gap-4">
-              <LogoMark className="h-14 w-14 shrink-0" />
-              <div>
-                <h1 className="text-2xl font-bold mb-1">
-                  Audio & Video Transcription
-                </h1>
-                <p className="text-neutral-400 text-sm">
-                  Choose a provider, drop your file, get a speaker-labelled
-                  Markdown transcript.
-                </p>
-              </div>
+            <div className="w-full max-w-2xl mx-auto text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-balance mb-3">
+                Audio & Video Transcription
+              </h1>
+              <p className="text-sm sm:text-base lg:text-lg leading-relaxed text-neutral-400 text-balance max-w-xl mx-auto sm:mx-0">
+                Choose a provider, drop your file, get a speaker-labelled
+                Markdown transcript.
+              </p>
             </div>
 
             {/* Provider cards */}
@@ -284,14 +312,14 @@ export default function TranscribeApp() {
 
             {/* Model selector (only for providers that have it) */}
             {provider.models.length > 0 && (
-              <div className="w-full flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
+              <div className="w-full flex flex-col gap-2">
+                <label className="text-sm font-medium text-neutral-400 uppercase tracking-wide">
                   {provider.name} model
                 </label>
                 <select
                   value={model || provider.defaultModel}
                   onChange={(e) => setModel(e.target.value)}
-                  className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-violet-500"
+                  className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-3 text-base focus:outline-none focus:border-violet-500"
                 >
                   {provider.models.map((m) => (
                     <option key={m.value} value={m.value}>
@@ -303,9 +331,9 @@ export default function TranscribeApp() {
             )}
 
             {/* Optional fields */}
-            <div className="w-full grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
+            <div className="w-full grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-neutral-400 uppercase tracking-wide">
                   Language
                 </label>
                 <input
@@ -313,11 +341,11 @@ export default function TranscribeApp() {
                   placeholder="Auto-detect (e.g. en, es, fr)"
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-violet-500 placeholder-neutral-600"
+                  className="bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-3 text-base focus:outline-none focus:border-violet-500 placeholder-neutral-600"
                 />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-neutral-400 uppercase tracking-wide">
                   Title
                 </label>
                 <input
@@ -325,7 +353,7 @@ export default function TranscribeApp() {
                   placeholder="Transcript title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-violet-500 placeholder-neutral-600"
+                  className="bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-3 text-base focus:outline-none focus:border-violet-500 placeholder-neutral-600"
                 />
               </div>
             </div>
@@ -394,11 +422,11 @@ function ProviderSelector({
   onSelect,
 }: ProviderSelectorProps) {
   return (
-    <div className="w-full space-y-2">
-      <h2 className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+    <div className="w-full space-y-3">
+      <h2 className="text-sm font-semibold text-neutral-400 uppercase tracking-wide">
         Provider
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {providers.map((p) => {
           const available = health ? health[p.key] : true;
           const active = selected === p.key;
@@ -407,54 +435,69 @@ function ProviderSelector({
               key={p.key}
               onClick={() => onSelect(p.key)}
               className={[
-                "relative text-left rounded-xl border p-4 transition-all focus:outline-none",
+                "relative overflow-hidden text-left rounded-xl border p-6 transition-all focus:outline-none",
                 active
-                  ? "border-violet-500 bg-violet-950/40 ring-1 ring-violet-500/30"
-                  : "border-neutral-800 bg-neutral-900 hover:border-neutral-600",
+                  ? CARD_STYLES[p.key].active
+                  : CARD_STYLES[p.key].inactive,
                 !available && "opacity-50",
               ].join(" ")}
             >
+              <div
+                className={[
+                  "absolute inset-x-0 top-0 h-1",
+                  p.key === "assemblyai" &&
+                    "bg-linear-to-r from-indigo-400 via-sky-400 to-cyan-300",
+                  p.key === "deepgram" &&
+                    "bg-linear-to-r from-cyan-400 via-teal-400 to-emerald-300",
+                  p.key === "openai" &&
+                    "bg-linear-to-r from-emerald-400 via-lime-400 to-amber-300",
+                  p.key === "whisper" &&
+                    "bg-linear-to-r from-orange-400 via-amber-400 to-rose-400",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              />
               {/* Header row */}
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <span className="font-semibold text-sm leading-tight">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <span className="font-semibold text-base leading-tight">
                   {p.name}
                 </span>
                 <span
-                  className={`shrink-0 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded border ${TIER_STYLES[p.tier]}`}
+                  className={`shrink-0 text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border ${TIER_STYLES[p.tier]}`}
                 >
                   {TIER_LABELS[p.tier]}
                 </span>
               </div>
 
               {/* Tagline */}
-              <p className="text-xs text-neutral-400 mb-2">{p.tagline}</p>
+              <p className="text-sm text-neutral-400 mb-3">{p.tagline}</p>
 
               {/* Features */}
-              <ul className="space-y-0.5 mb-3">
+              <ul className="space-y-1 mb-4">
                 {p.features.map((f) => (
                   <li
                     key={f}
-                    className="flex items-center gap-1.5 text-xs text-neutral-300"
+                    className="flex items-center gap-2 text-sm text-neutral-300"
                   >
-                    <CheckSmallIcon className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <CheckSmallIcon className="w-4 h-4 text-emerald-500 shrink-0" />
                     {f}
                   </li>
                 ))}
                 {!p.diarization && (
-                  <li className="flex items-center gap-1.5 text-xs text-neutral-500">
-                    <XSmallIcon className="w-3.5 h-3.5 shrink-0" />
+                  <li className="flex items-center gap-2 text-sm text-neutral-500">
+                    <XSmallIcon className="w-4 h-4 shrink-0" />
                     No speaker diarization
                   </li>
                 )}
               </ul>
 
               {/* Pricing */}
-              <p className="text-xs text-neutral-500 font-mono">{p.pricing}</p>
+              <p className="text-sm text-neutral-500 font-mono">{p.pricing}</p>
 
               {/* Unavailable badge */}
               {health && !available && (
-                <div className="absolute top-2 right-2">
-                  <span className="text-[10px] text-amber-400 bg-amber-950/60 border border-amber-700 rounded px-1.5 py-0.5">
+                <div className="absolute top-3 right-3">
+                  <span className="text-xs text-amber-400 bg-amber-950/60 border border-amber-700 rounded px-2 py-0.5">
                     {p.key === "whisper" ? "Not installed" : "No API key"}
                   </span>
                 </div>

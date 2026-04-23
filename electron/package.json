@@ -18,6 +18,7 @@
   "build": {
     "appId": "com.kneeraazon.transcribe",
     "productName": "Transcribe",
+    "icon": "../frontend/public/logo.png",
     "directories": {
       "output": "dist"
     },
@@ -27,8 +28,12 @@
     ],
     "extraResources": [
       {
-        "from": "../frontend/.next",
-        "to": "frontend/.next"
+        "from": "../frontend/.next/standalone",
+        "to": "frontend"
+      },
+      {
+        "from": "../frontend/.next/static",
+        "to": "frontend/.next/static"
       },
       {
         "from": "../frontend/public",
@@ -43,6 +48,10 @@
         "to": "utilities_data"
       },
       {
+        "from": "../.venv",
+        "to": "venv"
+      },
+      {
         "from": "../requirements.txt",
         "to": "requirements.txt"
       }
@@ -50,17 +59,34 @@
     "mac": {
       "category": "public.app-category.productivity",
       "target": [
-        { "target": "dmg", "arch": ["x64", "arm64"] }
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
       ]
     },
     "win": {
       "target": [
-        { "target": "nsis", "arch": ["x64"] }
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
       ]
     },
     "linux": {
+      "icon": "../frontend/public/logo.png",
       "target": [
-        { "target": "AppImage", "arch": ["x64"] }
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
       "category": "AudioVideo"
     }

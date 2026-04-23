@@ -304,9 +304,10 @@ npm run dist:win    # Windows → dist/*.exe
 npm run dist:linux  # Linux  → dist/*.AppImage
 ```
 
-> **Note:** Electron distributables require Python 3.8+ and the uv-installed Python dependencies
-> to be installed on the target machine. Bundling a full Python runtime
-> (e.g. via PyInstaller) would make the app truly self-contained.
+> **Note:** The desktop installer now ships the packaged Next.js server and will use a bundled
+> Python virtualenv when one is available at build time. For the most portable installer, run
+> `make install` before packaging so the Electron build can include `.venv`. ffmpeg is still
+> required on the target machine.
 
 ---
 
