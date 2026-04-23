@@ -1,0 +1,74 @@
+{
+  "name": "transcribe",
+  "version": "1.0.0",
+  "description": "Audio & Video Transcription Desktop App",
+  "main": "main.js",
+  "author": "kneeraazon404",
+  "license": "MIT",
+  "scripts": {
+    "dev": "concurrently -n api,next,electron -c magenta,cyan,yellow \"npm run dev:api\" \"npm run dev:next\" \"wait-on http://localhost:3000 && electron .\"",
+    "dev:api": "python ../backend/main.py",
+    "dev:next": "cd ../frontend && npm run dev",
+    "build": "npm run build:next && electron-builder",
+    "build:next": "cd ../frontend && npm run build",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.kneeraazon.transcribe",
+    "productName": "Transcribe",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js"
+    ],
+    "extraResources": [
+      {
+        "from": "../frontend/.next",
+        "to": "frontend/.next"
+      },
+      {
+        "from": "../frontend/public",
+        "to": "frontend/public"
+      },
+      {
+        "from": "../backend",
+        "to": "backend"
+      },
+      {
+        "from": "../utilities_data",
+        "to": "utilities_data"
+      },
+      {
+        "from": "../requirements.txt",
+        "to": "requirements.txt"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        { "target": "dmg", "arch": ["x64", "arm64"] }
+      ]
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] }
+      ]
+    },
+    "linux": {
+      "target": [
+        { "target": "AppImage", "arch": ["x64"] }
+      ],
+      "category": "AudioVideo"
+    }
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "electron": "^35.0.0",
+    "electron-builder": "^25.0.0",
+    "wait-on": "^8.0.0"
+  }
+}

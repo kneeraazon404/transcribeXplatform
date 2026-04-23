@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+"""
+transcribe - Transcribe audio/video files using AssemblyAI
+"""
+
+import sys
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# Load environment variables BEFORE importing other modules
+load_dotenv()
+
+# Add utilities_data/transcribe to path
+script_dir = Path(__file__).parent
+utilities_dir = script_dir.parent
+transcribe_dir = utilities_dir / "utilities_data" / "transcribe"
+sys.path.insert(0, str(transcribe_dir))
+
+from transcribe_aai import transcribe_with_normalization
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Transcribe audio/video files using AssemblyAI",
+        epilog=(
+            "Examples:\n"
+            "  transcribe audio.mp3                      # Creates audio.md in current directory\n"
+            "  transcribe video.mp4 --output custom.md   # Creates custom.md in current directory\n"
+            "  transcribe /path/to/file.mp3              # Creates file.md in current directory\n"
+            "  transcribe audio.mp3 -o ~/Desktop/out.md  # Save to specific location\n\n"
+            "Supported formats: WAV, MP3, MP4, M4A, FLAC, OGG, WebM, and more\n"
+            "Requires: ASSEMBLYAI_API_KEY in .env file"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+
+    parser.add_argument(
+        "input_file",
+        help="Path to audio or video file",
+    )
+
+    parser.add_argument(
+        "--output",
+        "-o",
+        default=None,
+        help="Path to save markdown transcript (default: <input_file>.md in current directory)",
+    )
+
+    parser.add_argument(
+        "--language",
+        "-l",
+        default=None,
+        help="Language code (e.g., 'en', 'es', 'fr'). Auto-detect if not specified.",
+    )
+
+    parser.add_argument(
+        "--title",
+        "-t",
+        default=None,
+        help="Custom title for the transcript (default: input filename)",
+    )
+
+    parser.add_argument(
+        "--keep-wav",
+        action="store_true",
+        help="Keep the normalized WAV file after transcription",
+    )
+
+    parser.add_argument(
+        "--backend",
+        "-b",
+        choices=["assemblyai", "whisper"],
+        default="assemblyai",
+        help=(
+            "Transcription backend (default: assemblyai). "
+            "'whisper' uses local faster-whisper — free, no API key, no internet required."
+        ),
+    )
+
+    parser.add_argument(
+        "--model",
+        "-m",
+        default="base",
+        help=(
+            "Whisper model size (only for --backend whisper). "
+            "Options: tiny, base, small, medium, large-v3, large-v3-turbo. "
+            "Larger = more accurate but slower. Default: base."
+        ),
+    )
+
+    # Show help if no arguments provided
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+
+    args = parser.parse_args()
+
+    # Determine output path
+    if args.output:
+        output_path = args.output
+    else:
+        input_path = Path(args.input_file)
+        output_filename = input_path.stem + '.md'
+        output_path = Path.cwd() / output_filename
+
+    try:
+        if args.backend == "whisper":
+            from transcribe_whisper import transcribe_whisper_pipeline
+            print("=" * 80)
+            print(f"Whisper Local Transcription (model: {args.model})")
+            print("=" * 80)
+            transcribe_whisper_pipeline(
+                input_file=args.input_file,
+                output_md=output_path,
+                model_size=args.model,
+                language_code=args.language,
+                title=args.title,
+                keep_wav=args.keep_wav,
+            )
+        else:
+            print("=" * 80)
+            print("AssemblyAI Audio Transcription")
+            print("=" * 80)
+            transcribe_with_normalization(
+                input_file=args.input_file,
+                output_md=output_path,
+                language_code=args.language,
+                title=args.title,
+                keep_wav=args.keep_wav,
+            )
+
+        print("=" * 80)
+        print("Transcription completed successfully!")
+        print("=" * 80)
+
+    except Exception as e:
+        print(f"\nError: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
