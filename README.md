@@ -1,6 +1,4 @@
-# Transcribe
-
-![Transcribe logo](frontend/public/logo.svg)
+# Transcribe App for Cross Platform
 
 Audio and video transcription with speaker identification. Available as a **CLI tool**, **web app**, and **cross-platform desktop app**.
 
