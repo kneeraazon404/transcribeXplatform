@@ -6,34 +6,19 @@ Audio and video transcription with speaker identification. Available as a **CLI 
 
 ## Screenshots
 
-<table>
-  <tr>
-    <td width="50%">
-      <img src="images/Screenshot_20260423_164130.png" alt="Landing page with provider cards and file dropzone" />
-      <p><strong>Landing page.</strong> A clean hero, provider cards, and the file dropzone.</p>
-    </td>
-    <td width="50%">
-      <img src="images/Screenshot_20260423_165159.png" alt="Upload state while a media file is being sent to the backend" />
-      <p><strong>Upload state.</strong> The app shows the current file while the request is in flight.</p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <img src="images/Screenshot_20260423_170729.png" alt="Processing state with live transcription progress" />
-      <p><strong>Processing state.</strong> Live backend progress messages stream in while transcription runs.</p>
-    </td>
-    <td width="50%">
-      <img src="images/Screenshot_20260423_173118.png" alt="Finished transcript rendered in Markdown" />
-      <p><strong>Transcript output.</strong> The completed Markdown transcript with speakers and timestamps.</p>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <img src="images/Screenshot_20260423_174632.png" alt="Electron desktop app version of Transcribe" />
-      <p><strong>Desktop app.</strong> The packaged Electron experience with the same interface and icon set.</p>
-    </td>
-  </tr>
-</table>
+| Landing page | Upload state |
+| --- | --- |
+| ![Landing page with provider cards and file dropzone](images/Screenshot_20260423_164130.png) | ![Upload state while a media file is being sent to the backend](images/Screenshot_20260423_165159.png) |
+| **Landing page.** A clean hero, provider cards, and the file dropzone. | **Upload state.** The app shows the current file while the request is in flight. |
+
+| Processing state | Transcript output |
+| --- | --- |
+| ![Processing state with live transcription progress](images/Screenshot_20260423_170729.png) | ![Finished transcript rendered in Markdown](images/Screenshot_20260423_173118.png) |
+| **Processing state.** Live backend progress messages stream in while transcription runs. | **Transcript output.** The completed Markdown transcript with speakers and timestamps. |
+
+![Electron desktop app version of Transcribe](images/Screenshot_20260423_174632.png)
+
+**Desktop app.** The packaged Electron experience with the same interface and icon set.
 
 ## At A Glance
 
@@ -48,7 +33,7 @@ Audio and video transcription with speaker identification. Available as a **CLI 
 ## Providers
 
 | Provider | Tier | Price | Speaker ID | Languages |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | [AssemblyAI](https://assemblyai.com) | Freemium | $0.17 / hr · **$50 free credits** | ✅ With names | 99+ |
 | [Deepgram Nova-3](https://deepgram.com) | Freemium | $0.0043 / min · **12 000 min / yr free** | ✅ Labels | 40+ |
 | [OpenAI Whisper](https://platform.openai.com) | Paid | $0.003 – $0.006 / min | ✗ | 99+ |
@@ -165,18 +150,18 @@ transcribe audio.mp3 \
   --keep-wav
 ```
 
-**Backends**
+#### Backends
 
 | Flag | Description |
-|------|-------------|
+| ------ | ------------- |
 | `assemblyai` | Cloud, speaker diarization + name detection, 99+ languages |
 | `deepgram` | Cloud, fast, speaker labels, 40+ languages |
 | `openai` | Cloud, GPT-4o powered, no diarization |
 | `whisper` | Local, free, offline, no diarization |
 
-**CLI options**
+#### CLI options
 
-```
+```bash
 positional:
   input_file              Path to audio or video file
 
@@ -189,10 +174,10 @@ optional:
       --keep-wav          Retain the normalised WAV file
 ```
 
-**Model options per backend**
+#### Model options per backend
 
 | Backend | Models |
-|---------|--------|
+| --------- | -------- |
 | `assemblyai` | Universal (fixed — no selection) |
 | `deepgram` | `nova-3` (default), `nova-2`, `enhanced`, `base` |
 | `openai` | `gpt-4o-mini-transcribe` (default), `gpt-4o-transcribe`, `whisper-1` |
@@ -232,7 +217,7 @@ Starts both servers and opens the Electron window automatically.
 
 ## Architecture
 
-```
+```bash
 transcribe/
 ├── utilities_data/transcribe/   # Core transcription library (Python)
 │   ├── media_probe.py           # ffprobe — detect streams, duration
@@ -267,7 +252,7 @@ transcribe/
 
 ### Request flow
 
-```
+```bash
 Browser / Electron window
     │  POST /api/transcribe  (multipart form)
     ▼
@@ -303,7 +288,7 @@ Next.js rewrite proxy  →  FastAPI :8000
 - `DELETE /api/jobs/{id}` — delete a job and clean up temporary files
 
 | Method | Endpoint | Description |
-|--------|----------|-------------|
+| -------- | ---------- | ------------- |
 | `GET` | `/api/health` | Available backends and their readiness |
 | `POST` | `/api/transcribe` | Upload file, start job → `{job_id}` |
 | `GET` | `/api/jobs/{id}` | Poll status, messages, transcript |
@@ -314,7 +299,7 @@ Next.js rewrite proxy  →  FastAPI :8000
 **POST `/api/transcribe` — form fields**
 
 | Field | Type | Default | Notes |
-|-------|------|---------|-------|
+| ------- | ------ | --------- | ------- |
 | `file` | file | — | Required. Any audio or video format |
 | `backend` | string | `assemblyai` | `assemblyai` · `openai` · `deepgram` · `whisper` |
 | `model` | string | provider default | Model name — see table above |
@@ -348,10 +333,10 @@ npm run dist:linux  # Linux  → dist/*.AppImage
 
 ## Supported Formats
 
-| Category | Formats |
-|----------|---------|
-| Audio | WAV · MP3 · FLAC · OGG · AAC · M4A · WMA |
-| Video | MP4 · MOV · AVI · MKV · FLV · WebM · WMV |
+| Category | Formats                                  |
+| -------- | ---------------------------------------- |
+| Audio    | WAV · MP3 · FLAC · OGG · AAC · M4A · WMA |
+| Video    | MP4 · MOV · AVI · MKV · FLV · WebM · WMV |
 
 Any format supported by ffmpeg works.
 
@@ -360,7 +345,7 @@ Any format supported by ffmpeg works.
 ## Provider Limits
 
 | Provider | Max size | Max duration | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | AssemblyAI | 5 GB | 10 hours | Async cloud processing |
 | Deepgram | 2 GB | — | Synchronous cloud |
 | OpenAI | **25 MB** | ~13 min | Use AAI or Deepgram for longer files |
